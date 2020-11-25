@@ -250,4 +250,5 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
       ),
     );
   }
+
 }

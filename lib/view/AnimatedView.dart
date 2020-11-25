@@ -48,6 +48,7 @@ class _AnimatedViewState extends State<AnimatedView>
 
   @override
   void dispose() {
+    animationController.dispose();
     timer?.cancel();
     super.dispose();
   }
