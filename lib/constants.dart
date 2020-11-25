@@ -15,3 +15,4 @@ const kGreenColor = Color(0xFF2F972F);
 const kBlueColor = Color(0xFF5D91F7);
 const kLightBlueColor = Color(0xFF9EC5FA);
 const kLightBlueAsscent = Color(0xFFD0E0FB);
+const kTargetBackgroundColor = Color(0xFF6960D8);
