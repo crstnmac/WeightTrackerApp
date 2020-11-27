@@ -4,7 +4,7 @@ class ButtonBlur extends StatelessWidget {
   final Widget child;
   final double height;
   final Color color;
-  double width;
+  final double width;
 
   ButtonBlur(
       {@required this.child,

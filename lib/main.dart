@@ -1,8 +1,8 @@
 import 'package:WeightLossCal/screens/MyWeightScreen.dart';
-import 'package:WeightLossCal/screens/TargetScreen.dart';
+import 'package:WeightLossCal/screens/HistoryScreen.dart';
 import 'package:WeightLossCal/widgets/customBottomAppBar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 void main() {
   runApp(WeightLossCal());
@@ -16,7 +16,7 @@ class WeightLossCal extends StatefulWidget {
 class _WeightLossCalState extends State<WeightLossCal> {
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    // SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
 
@@ -39,15 +39,13 @@ class _WeightLossCalState extends State<WeightLossCal> {
         bottomNavigationBar: CustomBottomAppBar(
           onTabSelected: tapped,
           items: [
-            CustomAppBarItem(icon: Icons.save_alt, text: "My weight"),
             CustomAppBarItem(
-                icon: Icons.track_changes_outlined, text: "Targets"),
+                icon: MaterialCommunityIcons.scale_bathroom, text: "My weight"),
+            CustomAppBarItem(icon: Icons.history, text: "History"),
           ],
         ),
         body: _widgets[index],
       ),
     );
   }
-
-
 }

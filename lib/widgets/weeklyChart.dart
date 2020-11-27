@@ -11,7 +11,7 @@ class _WeeklyChartState extends State<WeeklyChart> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.7,
+      aspectRatio: MediaQuery.of(context).size.aspectRatio / 0.35,
       child: Container(
         decoration: BoxDecoration(
             border: Border.all(color: Colors.grey, width: 0.2),
@@ -58,7 +58,7 @@ getBarGroups() {
               BarChartRodData(
                 y: value,
                 //This is not the proper way, this is just for demo
-                width: 16,
+                width: 14,
                 colors: [kPrimaryColor2, kPrimaryAsscent],
               )
             ],

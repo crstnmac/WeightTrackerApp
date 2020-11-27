@@ -1,8 +1,10 @@
+import 'package:WeightLossCal/screens/ProfileScreen.dart';
 import 'package:WeightLossCal/widgets/ImtGraph.dart';
 import 'package:WeightLossCal/widgets/WeightProgress.dart';
 import 'package:WeightLossCal/widgets/buttonBlur.dart';
 import 'package:WeightLossCal/widgets/weeklyChart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class MyWeightScreen extends StatefulWidget {
   @override
@@ -36,8 +38,20 @@ class _MyWeightScreenState extends State<MyWeightScreen> {
                               style: TextStyle(
                                   fontSize: 30.0, fontWeight: FontWeight.bold),
                             ),
-                            CircleAvatar(
-                              radius: 20.0,
+                            GestureDetector(
+                              onTap: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ProfileScreen(),
+                                  ),
+                                ),
+                              },
+                              child: Icon(
+                                MaterialCommunityIcons.face,
+                                size: 50.0,
+                              ),
                             ),
                           ],
                         ),

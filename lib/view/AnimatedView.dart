@@ -56,8 +56,8 @@ class _AnimatedViewState extends State<AnimatedView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
-      width: 300,
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.width * 0.8,
       child: CustomPaint(
         painter: AnimatedCircle(
           value: animation.value,
