@@ -43,7 +43,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
       color: Colors.transparent,
       elevation: 0.0,
       child: Container(
-        height: 120.0,
+        height: 80.0,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -56,16 +56,16 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
   Widget _buildMiddleSeparator() {
     return Expanded(
       child: SizedBox(
-        height: 100.0,
+        height: 120.0,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ButtonBlur(
-              height: 70,
+              height: 60,
               color: kPrimaryColor,
               child: Container(
-                width: 80,
+                width: 60,
                 child: FlatButton(
                   color: kPrimaryColor,
                   onPressed: () => {
@@ -76,19 +76,16 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
                       ),
                     ),
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 35,
-                        )
-                      ],
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 28,
+                      )
+                    ],
                   ),
                   shape: const CircleBorder(),
                 ),

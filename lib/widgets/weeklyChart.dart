@@ -10,39 +10,53 @@ class WeeklyChart extends StatefulWidget {
 class _WeeklyChartState extends State<WeeklyChart> {
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: MediaQuery.of(context).size.aspectRatio / 0.35,
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 0.2),
-            borderRadius: BorderRadius.circular(25.0)),
-        child: Padding(
-          padding:
-              EdgeInsets.only(left: 5.0, right: 20.0, bottom: 5.0, top: 20.0),
-          child: BarChart(
-            BarChartData(
-              maxY: 70,
-              barGroups: getBarGroups(),
-              borderData: FlBorderData(show: false),
-              titlesData: FlTitlesData(
-                leftTitles: SideTitles(
-                  margin: 20.0,
-                  showTitles: true,
-                  getTitles: getRange,
+    return Stack(
+      children: [
+        Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.323,
+            width: MediaQuery.of(context).size.width * 0.80,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 0.2),
+                borderRadius: BorderRadius.circular(25.0)),
+          ),
+        ),
+        AspectRatio(
+          aspectRatio: MediaQuery.of(context).size.aspectRatio / 0.35,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey, width: 0.2),
+                borderRadius: BorderRadius.circular(25.0)),
+            child: Padding(
+              padding: EdgeInsets.only(
+                  left: 5.0, right: 20.0, bottom: 5.0, top: 20.0),
+              child: BarChart(
+                BarChartData(
+                  maxY: 70,
+                  barGroups: getBarGroups(),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    leftTitles: SideTitles(
+                      margin: 20.0,
+                      showTitles: true,
+                      getTitles: getRange,
+                    ),
+                    bottomTitles: SideTitles(
+                      margin: 10.0,
+                      showTitles: true,
+                      getTitles: getWeek,
+                    ),
+                  ),
+                  barTouchData: BarTouchData(
+                    enabled: false,
+                  ),
                 ),
-                bottomTitles: SideTitles(
-                  margin: 10.0,
-                  showTitles: true,
-                  getTitles: getWeek,
-                ),
-              ),
-              barTouchData: BarTouchData(
-                enabled: false,
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

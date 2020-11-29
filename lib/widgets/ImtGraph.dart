@@ -60,25 +60,26 @@ class ImtGraph extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Container(
-                        height: 42.0,
-                        width: 335.0,
-                        child: BarChart(
-                          BarChartData(
-                            maxY: 1,
-                            barGroups: getBarGroups(),
-                            borderData: FlBorderData(show: false),
-                            titlesData: FlTitlesData(
-                              leftTitles: SideTitles(
-                                showTitles: false,
+                      Expanded(
+                          child: Container(
+                          height: 42.0,
+                          child: BarChart(
+                            BarChartData(
+                              maxY: 1,
+                              barGroups: getBarGroups(),
+                              borderData: FlBorderData(show: false),
+                              titlesData: FlTitlesData(
+                                leftTitles: SideTitles(
+                                  showTitles: false,
+                                ),
+                                bottomTitles: SideTitles(
+                                  margin: 8.0,
+                                  showTitles: true,
+                                  getTitles: getWeek,
+                                ),
                               ),
-                              bottomTitles: SideTitles(
-                                margin: 8.0,
-                                showTitles: true,
-                                getTitles: getWeek,
-                              ),
+                              barTouchData: BarTouchData(enabled: false),
                             ),
-                            barTouchData: BarTouchData(enabled: false),
                           ),
                         ),
                       ),

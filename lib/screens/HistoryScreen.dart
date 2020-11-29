@@ -41,7 +41,7 @@ class _TargetScreenState extends State<TargetScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             WeightCard(),
-                            SizedBox(height: 20.0),
+                            SizedBox(height: 10.0),
                             WeightCard(),
                           ],
                         ),

@@ -72,7 +72,7 @@ class _MyWeightScreenState extends State<MyWeightScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "70kg",
+                              "64kg",
                               style: TextStyle(
                                 fontSize: 25.0,
                                 fontWeight: FontWeight.w600,
