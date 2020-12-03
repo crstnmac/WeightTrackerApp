@@ -1,4 +1,4 @@
-import 'package:WeightLossCal/widgets/WeightCard.dart';
+import 'package:WeightLossCal/widgets/display_weight.dart';
 import 'package:flutter/material.dart';
 
 class TargetScreen extends StatefulWidget {
@@ -40,9 +40,9 @@ class _TargetScreenState extends State<TargetScreen> {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            WeightCard(),
+                            DisplayWeight(),
                             SizedBox(height: 10.0),
-                            WeightCard(),
+                            DisplayWeight(),
                           ],
                         ),
                       ],

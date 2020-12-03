@@ -1,17 +1,17 @@
 import 'dart:math' as math;
-import 'package:WeightLossCal/constants.dart';
-import 'package:WeightLossCal/widgets/buttonBlur.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'card_title.dart';
+import '../../widgets/card_title.dart';
 import 'gender.dart';
 import 'package:flutter/material.dart';
 
 import 'package:WeightLossCal/utils/widget.dart' show screenAwareSize;
 
 class GenderCard extends StatefulWidget {
-  final Gender initialGender;
+  final Gender gender;
+  final ValueChanged<Gender> onChanged;
 
-  GenderCard({Key key, this.initialGender}) : super(key: key);
+  GenderCard({Key key, this.gender = Gender.other, this.onChanged})
+      : super(key: key);
 
   @override
   _GenderCardState createState() => _GenderCardState();
@@ -22,16 +22,14 @@ double _circleSize(BuildContext context) => screenAwareSize(80.0, context);
 class _GenderCardState extends State<GenderCard>
     with SingleTickerProviderStateMixin {
   AnimationController _arrowAnimationController;
-  Gender selectedGender;
 
   @override
   void initState() {
-    selectedGender = widget.initialGender ?? Gender.other;
     _arrowAnimationController = new AnimationController(
       vsync: this,
       lowerBound: -_defaultGenderAngle,
       upperBound: _defaultGenderAngle,
-      value: _genderAngles[selectedGender],
+      value: _genderAngles[widget.gender],
     );
     super.initState();
   }
@@ -44,33 +42,26 @@ class _GenderCardState extends State<GenderCard>
 
   @override
   Widget build(BuildContext context) {
-    return ButtonBlur(
-      color: Colors.black,
-      height: 100.0,
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(19.6),
-            border:
-                Border.all(color: Colors.black.withOpacity(0.4), width: 0.2)),
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: EdgeInsets.only(
-              top: screenAwareSize(8.0, context),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CardTitle("GENDER"),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: screenAwareSize(16.0, context),
-                  ),
-                  child: _drawMainStack(),
-                ),
-              ],
-            ),
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(19.6),
+          border: Border.all(color: Colors.black.withOpacity(0.4), width: 0.2)),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: screenAwareSize(8.0, context),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CardTitle("GENDER"),
+              Padding(
+                padding: EdgeInsets.all(6.0),
+                child: _drawMainStack(),
+              ),
+            ],
           ),
         ),
       ),
@@ -84,9 +75,18 @@ class _GenderCardState extends State<GenderCard>
         alignment: Alignment.bottomCenter,
         children: [
           _drawCircleIndicator(),
-          GenderIconTranslated(gender: Gender.female),
-          GenderIconTranslated(gender: Gender.other),
-          GenderIconTranslated(gender: Gender.male),
+          GenderIconTranslated(
+            gender: Gender.female,
+            isSelected: widget.gender == Gender.female,
+          ),
+          GenderIconTranslated(
+            gender: Gender.other,
+            isSelected: widget.gender == Gender.other,
+          ),
+          GenderIconTranslated(
+            gender: Gender.male,
+            isSelected: widget.gender == Gender.male,
+          ),
           _drawGestureDetector()
         ],
       ),
@@ -114,7 +114,7 @@ class _GenderCardState extends State<GenderCard>
   }
 
   void _setSelectedGender(Gender gender) {
-    setState(() => selectedGender = gender);
+    widget.onChanged(gender);
     _arrowAnimationController.animateTo(
       _genderAngles[gender],
       duration: Duration(milliseconds: 500),
@@ -176,6 +176,9 @@ const Map<Gender, double> _genderAngles = {
 };
 
 class GenderIconTranslated extends StatelessWidget {
+  final Gender gender;
+  final bool isSelected;
+
   static final Map<Gender, IconData> _genderIcons = {
     Gender.female: MaterialCommunityIcons.gender_female,
     Gender.other: MaterialCommunityIcons.gender_transgender,
@@ -184,9 +187,8 @@ class GenderIconTranslated extends StatelessWidget {
 
   double _circleSize(BuildContext context) => screenAwareSize(80.0, context);
 
-  final Gender gender;
-
-  const GenderIconTranslated({Key key, this.gender}) : super(key: key);
+  const GenderIconTranslated({Key key, this.gender, this.isSelected = false})
+      : super(key: key);
 
   bool get _isOtherGender => gender == Gender.other;
 
@@ -196,18 +198,16 @@ class GenderIconTranslated extends StatelessWidget {
     return screenAwareSize(_isOtherGender ? 28.0 : 22.0, context);
   }
 
-  double _genderLeftPadding(BuildContext context) {
-    return screenAwareSize(_isOtherGender ? 8.0 : 0.0, context);
-  }
+  // double _genderLeftPadding(BuildContext context) {
+  //   return screenAwareSize(_isOtherGender ? 0.0 : 0.0, context);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    Widget icon = Padding(
-      padding: EdgeInsets.only(left: _genderLeftPadding(context)),
-      child: Icon(
-        _assetName,
-        size: _iconSize(context),
-      ),
+    Widget icon = Icon(
+      _assetName,
+      size: _iconSize(context),
+      color: isSelected ? null : Color.fromRGBO(143, 144, 156, 1.0),
     );
 
     Widget rotatedIcon = Transform.rotate(

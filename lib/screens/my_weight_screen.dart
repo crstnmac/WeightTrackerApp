@@ -1,8 +1,8 @@
-import 'package:WeightLossCal/screens/ProfileScreen.dart';
-import 'package:WeightLossCal/widgets/ImtGraph.dart';
-import 'package:WeightLossCal/widgets/WeightProgress.dart';
-import 'package:WeightLossCal/widgets/buttonBlur.dart';
-import 'package:WeightLossCal/widgets/weeklyChart.dart';
+import 'package:WeightLossCal/screens/profile_screen.dart';
+import 'package:WeightLossCal/cards/imt_card.dart';
+import 'package:WeightLossCal/cards/weight_progress.dart';
+import 'package:WeightLossCal/widgets/button_blur.dart';
+import 'package:WeightLossCal/cards/weekly_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
@@ -79,8 +79,12 @@ class _MyWeightScreenState extends State<MyWeightScreen> {
                               ),
                             ),
                             ButtonBlur(
-                              height: 32,
                               color: Colors.black12,
+                              height: 32,
+                              blurRadius: 8,
+                              opacity: 0.05,
+                              offsetX: 0,
+                              offsetY: 0,
                               child: FlatButton(
                                 splashColor: Colors.transparent,
                                 color: Colors.white,
@@ -102,7 +106,11 @@ class _MyWeightScreenState extends State<MyWeightScreen> {
                                     ],
                                   ),
                                 ),
-                                shape: const StadiumBorder(),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    20.0,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

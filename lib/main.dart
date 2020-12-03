@@ -1,10 +1,18 @@
-import 'package:WeightLossCal/screens/MyWeightScreen.dart';
-import 'package:WeightLossCal/screens/HistoryScreen.dart';
-import 'package:WeightLossCal/widgets/customBottomAppBar.dart';
+import 'package:WeightLossCal/constants.dart';
+import 'package:WeightLossCal/screens/my_weight_screen.dart';
+import 'package:WeightLossCal/screens/history_screen.dart';
+import 'package:WeightLossCal/widgets/custom_bottom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: kBackgroundColor, //top bar color
+    statusBarIconBrightness: Brightness.dark, //top bar icons
+    systemNavigationBarColor: kBackgroundColor, //bottom bar color
+    systemNavigationBarIconBrightness: Brightness.dark, //bottom bar icons
+  ));
   runApp(WeightLossCal());
 }
 
@@ -16,7 +24,6 @@ class WeightLossCal extends StatefulWidget {
 class _WeightLossCalState extends State<WeightLossCal> {
   @override
   void initState() {
-    // SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
 
@@ -35,6 +42,10 @@ class _WeightLossCalState extends State<WeightLossCal> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Weight Loss Calculator',
+      theme: ThemeData(
+        primaryColor: kBlueColor,
+        fontFamily: 'SF Pro Display',
+      ),
       home: Scaffold(
         bottomNavigationBar: CustomBottomAppBar(
           onTabSelected: tapped,

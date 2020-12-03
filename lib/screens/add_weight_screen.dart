@@ -1,6 +1,6 @@
 import 'package:WeightLossCal/constants.dart';
-import 'package:WeightLossCal/view/AnimatedView.dart';
-import 'package:WeightLossCal/widgets/buttonBlur.dart';
+import 'package:WeightLossCal/view/animated_view.dart';
+import 'package:WeightLossCal/widgets/button_blur.dart';
 import 'package:flutter/material.dart';
 
 class AddWeightScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
         },
         child: Container(
           height: MediaQuery.of(context).size.height * 1,
-          color: kTargetBackgroundColor,
+          color: kBlueColor,
           child: SafeArea(
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
@@ -106,29 +106,31 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
                             SizedBox(
                               height: 25.0,
                             ),
-                            Container(
-                              width: 60.0,
-                              child: ButtonBlur(
-                                height: 30,
-                                color: Colors.black12,
-                                child: FlatButton(
-                                  focusColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  hoverColor: Colors.transparent,
-                                  color: Colors.white,
-                                  onPressed: () => {},
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "KG",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                  shape: const StadiumBorder(),
+                            ButtonBlur(
+                              height: 30,
+                              width: 60,
+                              color: Colors.grey.withOpacity(0.5),
+                              opacity: 0.1,
+                              offsetX: 0,
+                              offsetY: 0,
+                              blurRadius: 12,
+                              child: FlatButton(
+                                focusColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                color: Colors.white,
+                                onPressed: () => {},
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "KG",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ],
                                 ),
+                                shape: const StadiumBorder(),
                               ),
                             ),
                           ],
@@ -147,14 +149,18 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
                       children: [
                         ButtonBlur(
                           height: 55.0,
+                          blurRadius: 8,
+                          opacity: 0.05,
+                          offsetX: 0,
+                          offsetY: 0,
                           width: MediaQuery.of(context).size.width * 0.45,
                           color: Colors.black12,
                           child: FlatButton(
                             focusColor: Colors.transparent,
-                            splashColor: Colors.transparent,
+                            splashColor: Colors.black.withOpacity(0.4),
                             highlightColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            color: Colors.black.withOpacity(0.2),
+                            hoverColor: Colors.black.withOpacity(0.4),
+                            color: Colors.black.withOpacity(0.1),
                             onPressed: () => {},
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -183,14 +189,18 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
                         ),
                         ButtonBlur(
                           height: 55.0,
+                          blurRadius: 8,
+                          opacity: 0.05,
+                          offsetX: 0,
+                          offsetY: 0,
                           width: MediaQuery.of(context).size.width * 0.45,
                           color: Colors.black12,
                           child: FlatButton(
                             focusColor: Colors.transparent,
-                            splashColor: Colors.transparent,
+                            splashColor: Colors.black.withOpacity(0.4),
                             highlightColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            color: Colors.black.withOpacity(0.2),
+                            hoverColor: Colors.black.withOpacity(0.4),
+                            color: Colors.black.withOpacity(0.1),
                             onPressed: () => {},
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -224,15 +234,19 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
                     padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                     child: ButtonBlur(
                       height: 55.0,
+                      blurRadius: 8,
+                      opacity: 0.05,
+                      offsetX: 0,
+                      offsetY: 0,
                       width: MediaQuery.of(context).size.width * 1,
-                      color: Colors.black12,
+                      color: Colors.black,
                       child: FlatButton(
-                        focusColor: Colors.transparent,
-                        splashColor: Colors.transparent,
+                        focusColor: Colors.black.withOpacity(0.1),
+                        splashColor: Colors.black.withOpacity(0.1),
                         highlightColor: Colors.transparent,
                         hoverColor: Colors.transparent,
                         color: Colors.white,
-                        onPressed: () => {},
+                        onPressed: () => {Navigator.pop(context)},
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

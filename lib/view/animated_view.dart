@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:WeightLossCal/widgets/circlePath.dart';
+import 'package:WeightLossCal/widgets/circle_path.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedView extends StatefulWidget {

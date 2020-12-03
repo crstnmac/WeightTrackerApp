@@ -1,6 +1,6 @@
 import 'package:WeightLossCal/constants.dart';
-import 'package:WeightLossCal/screens/AddWeightScreen.dart';
-import 'package:WeightLossCal/widgets/buttonBlur.dart';
+import 'package:WeightLossCal/screens/add_weight_screen.dart';
+import 'package:WeightLossCal/widgets/button_blur.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBarItem {
@@ -63,11 +63,16 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
           children: <Widget>[
             ButtonBlur(
               height: 60,
-              color: kPrimaryColor,
+              containerRadius: 30,
+              blurRadius: 16,
+              opacity: 0.2,
+              offsetX: 0,
+              offsetY: 8,
+              color: kBlueColor,
               child: Container(
                 width: 60,
                 child: FlatButton(
-                  color: kPrimaryColor,
+                  color: kBlueColor,
                   onPressed: () => {
                     Navigator.push(
                       context,
@@ -113,14 +118,13 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
               children: [
                 Icon(
                   item.icon,
-                  color: _selectedIndex == index ? kPrimaryColor : Colors.black,
+                  color: _selectedIndex == index ? kBlueColor : Colors.black,
                   size: 30.0,
                 ),
                 Text(
                   item.text,
                   style: TextStyle(
-                    color:
-                        _selectedIndex == index ? kPrimaryColor : Colors.black,
+                    color: _selectedIndex == index ? kBlueColor : Colors.black,
                   ),
                 ),
               ],

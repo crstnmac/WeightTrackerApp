@@ -73,7 +73,7 @@ getBarGroups() {
                 y: value,
                 //This is not the proper way, this is just for demo
                 width: 14,
-                colors: [kPrimaryColor2, kPrimaryAsscent],
+                colors: [kBlueColor, kLightBlueColor],
               )
             ],
           ),

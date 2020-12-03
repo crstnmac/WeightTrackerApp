@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class WeightCard extends StatelessWidget {
-  const WeightCard({Key key}) : super(key: key);
+class DisplayWeight extends StatelessWidget {
+  const DisplayWeight({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
