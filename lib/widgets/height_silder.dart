@@ -1,9 +1,11 @@
 import 'package:WeightLossCal/constants.dart';
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:WeightLossCal/utils/height_styles.dart';
 import 'package:WeightLossCal/utils/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class HeightSlider extends StatelessWidget {
+class HeightSlider extends GetView<ProfileController> {
   final int height;
 
   const HeightSlider({Key key, this.height}) : super(key: key);

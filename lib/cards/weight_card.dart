@@ -1,15 +1,15 @@
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:WeightLossCal/utils/widget.dart' show screenAwareSize;
 import 'package:WeightLossCal/widgets/card_title.dart';
 import 'package:WeightLossCal/widgets/weight_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:get/get.dart';
 
-class WeightCard extends StatelessWidget {
-  final int weight;
-  final ValueChanged<int> onChanged;
+class WeightCard extends GetView<ProfileController> {
+  final RxInt weight;
 
-  const WeightCard({Key key, this.weight = 70, this.onChanged})
-      : super(key: key);
+  const WeightCard({Key key, this.weight}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +51,12 @@ class WeightCard extends StatelessWidget {
     return WeightBackground(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return WeightSlider(
-            minValue: 30,
-            maxValue: 150,
-            value: weight,
-            onChanged: (val) => onChanged(val),
-            width: constraints.maxWidth,
-          );
+          return Obx(() => (WeightSlider(
+                minValue: controller.minWeight,
+                maxValue: controller.maxWeight,
+                value: controller.weight.value,
+                width: constraints.maxWidth,
+              )));
         },
       ),
     );

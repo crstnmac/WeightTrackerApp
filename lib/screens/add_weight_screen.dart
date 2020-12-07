@@ -33,11 +33,9 @@ class _AddWeightScreenState extends State<AddWeightScreen> {
                         child: FlatButton(
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                          onPressed: () {},
                           child: Text(
-                            "Cancel",
+                            "",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20.0,

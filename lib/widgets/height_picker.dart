@@ -1,78 +1,46 @@
 import 'dart:math' as math;
 
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:WeightLossCal/utils/height_styles.dart';
-import 'package:WeightLossCal/utils/widget.dart';
 import 'package:WeightLossCal/widgets/height_silder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
-class HeightPicker extends StatefulWidget {
-  final int maxHeight;
-  final int minHeight;
-  final int height;
-  final double widgetHeight;
-  final ValueChanged<int> onChange;
+class HeightController extends GetxController {
+  ProfileController profileController = Get.put(ProfileController());
 
-  HeightPicker(
-      {Key key,
-      this.height,
-      this.widgetHeight,
-      this.onChange,
-      this.maxHeight = 190,
-      this.minHeight = 145})
-      : super(key: key);
+  final minHeight = 145;
+  final maxHeight = 190;
+
+  double startDragYOffset;
+  int startDragHeight;
+  int newHeight;
 
   int get totalUnits => maxHeight - minHeight;
 
-  @override
-  _HeightPickerState createState() => _HeightPickerState();
-}
-
-class _HeightPickerState extends State<HeightPicker> {
-  double startDragYOffset;
-  int startDragHeight;
-
   double get _pixelPerUnit {
-    return _drawHeight / widget.totalUnits;
+    return _drawHeight / totalUnits;
   }
 
   double get _sliderPosition {
     double halfOfBottomLabel = labelsFontSize / 2;
-    int unitsFromBottom = widget.height - widget.minHeight;
+    int unitsFromBottom = profileController.height.value - minHeight;
     return halfOfBottomLabel + unitsFromBottom * _pixelPerUnit;
   }
 
   double get _drawHeight {
-    double totalHeight = widget.widgetHeight;
-    double marginBottom = marginBottomAdapted(context);
-    double marginTop = marginTopAdapted(context);
+    double totalHeight = Get.height;
+    // widget.widgetHeight;
+    double marginBottom = 16.0;
+    double marginTop = 26.0;
     return totalHeight - (marginBottom + marginTop + labelsFontSize);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTapDown: _onTapDown,
-      onVerticalDragStart: _onDragStart,
-      onVerticalDragUpdate: _onDragUpdate,
-      child: Stack(
-        children: [
-          _drawPerson(),
-          _drawSlider(),
-          _drawLabels(),
-        ],
-      ),
-    );
-  }
-
   _onDragStart(DragStartDetails dragStartDetails) {
-    int newHeight = _globalOffsetToHeight(dragStartDetails.globalPosition);
-    widget.onChange(newHeight);
-    setState(() {
-      startDragYOffset = dragStartDetails.globalPosition.dy;
-      startDragHeight = newHeight;
-    });
+    newHeight = _globalOffsetToHeight(dragStartDetails.globalPosition);
+    startDragYOffset = dragStartDetails.globalPosition.dy;
+    startDragHeight = newHeight;
   }
 
   _onDragUpdate(DragUpdateDetails dragUpdateDetails) {
@@ -80,31 +48,60 @@ class _HeightPickerState extends State<HeightPicker> {
     double verticalDifference = startDragYOffset - currentYOffset;
     int diffHeight = verticalDifference ~/ _pixelPerUnit;
     int height = _normalizeHeight(startDragHeight + diffHeight);
-    setState(() {
-      widget.onChange(height);
-    });
+    profileController.height(height);
   }
 
   _onTapDown(TapDownDetails tapDownDetails) {
     int height = _globalOffsetToHeight(tapDownDetails.globalPosition);
-    widget.onChange(_normalizeHeight(height));
+    _normalizeHeight(height);
   }
 
   int _normalizeHeight(int height) {
-    return math.max(widget.minHeight, math.min(widget.maxHeight, height));
+    return math.max(minHeight, math.min(maxHeight, height));
   }
 
   int _globalOffsetToHeight(Offset globalOffset) {
-    RenderBox getBox = context.findRenderObject();
+    RenderBox getBox = Get.context.findRenderObject();
     Offset localPosition = getBox.globalToLocal(globalOffset);
     double dy = localPosition.dy;
-    dy = dy - marginTopAdapted(context) - labelsFontSize / 2;
-    int height = widget.maxHeight - (dy ~/ _pixelPerUnit);
+    dy = dy - 26.0 - labelsFontSize / 2;
+    int height = maxHeight - (dy ~/ _pixelPerUnit);
     return height;
+  }
+}
+
+class HeightPicker extends StatelessWidget {
+  final int maxHeight;
+  final int minHeight;
+  final RxInt height;
+  final double widgetHeight;
+
+  HeightPicker(
+      {Key key, this.height, this.widgetHeight, this.maxHeight, this.minHeight})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    HeightController heightController = Get.put(HeightController());
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTapDown: heightController._onTapDown,
+      onVerticalDragStart: heightController._onDragStart,
+      onVerticalDragUpdate: heightController._onDragUpdate,
+      child: Stack(
+        children: [
+          // _drawPerson(),
+          Obx(() => (_drawSlider())),
+          _drawLabels(),
+        ],
+      ),
+    );
   }
 
   Widget _drawPerson() {
-    double personImageHeight = _sliderPosition + marginBottomAdapted(context);
+    HeightController heightController = Get.put(HeightController());
+
+    double personImageHeight = heightController._sliderPosition + 16.0;
     return Align(
       alignment: Alignment.bottomCenter,
       child: SvgPicture.asset(
@@ -116,20 +113,25 @@ class _HeightPickerState extends State<HeightPicker> {
   }
 
   Widget _drawSlider() {
+    HeightController heightController = Get.put(HeightController());
+
     return Positioned(
-      child: HeightSlider(height: widget.height),
+      child:
+          HeightSlider(height: heightController.profileController.height.value),
       left: 0.0,
       right: 0.0,
-      bottom: _sliderPosition,
+      bottom: heightController._sliderPosition,
     );
   }
 
   Widget _drawLabels() {
-    int labelsToDispaly = widget.totalUnits ~/ 5 + 1;
+    HeightController heightController = Get.put(HeightController());
+
+    int labelsToDispaly = heightController.totalUnits ~/ 5 + 1;
     List<Widget> labels = List.generate(
       labelsToDispaly,
       (index) => Text(
-        "${widget.maxHeight - 5 * index}",
+        "${heightController.maxHeight - 5 * index}",
         style: labelsTextStyle,
       ),
     );
@@ -139,9 +141,9 @@ class _HeightPickerState extends State<HeightPicker> {
       child: IgnorePointer(
         child: Padding(
           padding: EdgeInsets.only(
-            right: screenAwareSize(12.0, context),
-            bottom: marginBottomAdapted(context),
-            top: marginTopAdapted(context),
+            right: 12.0,
+            bottom: 16.0,
+            top: 26.0,
           ),
           child: Column(
             children: labels,

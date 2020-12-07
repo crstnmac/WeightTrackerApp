@@ -1,25 +1,24 @@
-import 'package:WeightLossCal/cards/gender_card/gender.dart';
-import 'package:WeightLossCal/cards/gender_card/gender_card.dart';
+import 'package:WeightLossCal/cards/gender_card.dart';
 import 'package:WeightLossCal/cards/height_card.dart';
 import 'package:WeightLossCal/cards/profile_summary_card.dart';
 import 'package:WeightLossCal/cards/weight_card.dart';
 import 'package:WeightLossCal/constants.dart';
+import 'package:WeightLossCal/controllers/profile_controller.dart';
+import 'package:WeightLossCal/screens/my_weight_screen.dart';
+import 'package:WeightLossCal/utils/gender.dart';
 import 'package:WeightLossCal/widgets/button_blur.dart';
 import 'package:flutter/material.dart';
 
 import 'package:WeightLossCal/utils/widget.dart' show screenAwareSize;
+import 'package:get/get.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key key}) : super(key: key);
+class ProfileScreen extends GetView<ProfileController> {
+  final Rx<Gender> gender;
+  final RxInt weight;
+  final RxInt height;
 
-  @override
-  _ProfileScreenState createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  Gender gender = Gender.other;
-  int height = 170;
-  int weight = 70;
+  const ProfileScreen({Key key, this.height, this.weight, this.gender})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +33,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildTitle(context),
               SizedBox(height: 25.0),
               ProfileSummaryCard(
-                gender: gender,
-                weight: weight,
-                height: height,
+                gender: controller.gender,
+                weight: controller.weight,
+                height: controller.height,
               ),
               Expanded(child: _buildCards(context)),
               _buildBottom(context),
@@ -56,7 +55,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           onPressed: () {
-            Navigator.pop(context);
+            Get.reset(
+              clearRouteBindings: true,
+            );
+            navigator.pop(context);
           },
           child: Text(
             "Go back",
@@ -88,7 +90,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // hoverColor: Colors.transparent,
           color: kBlueColor,
           onPressed: () => {
-            Navigator.pop(context),
+            controller.handleDoneTap(),
+            navigator.push(
+                MaterialPageRoute(builder: (context) => MyWeightScreen())),
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -117,17 +121,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                  child: GenderCard(
-                gender: gender,
-                onChanged: (val) => setState(() => gender = val),
-              )),
+                child: GenderCard(
+                  gender: controller.gender,
+                ),
+              ),
               SizedBox(
                 height: 12.0,
               ),
               Expanded(
                 child: WeightCard(
-                  weight: weight,
-                  onChanged: (val) => setState(() => weight = val),
+                  weight: controller.weight,
                 ),
               ),
             ],
@@ -138,8 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         Expanded(
             child: HeightCard(
-          height: height,
-          onChanged: (val) => setState(() => height = val),
+          height: controller.height,
         )),
       ],
     );

@@ -1,13 +1,15 @@
-import 'package:WeightLossCal/cards/gender_card/gender.dart';
+import 'package:WeightLossCal/controllers/profile_controller.dart';
+import 'package:WeightLossCal/utils/gender.dart';
 import 'package:WeightLossCal/utils/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ProfileSummaryCard extends StatelessWidget {
-  final Gender gender;
-  final int height;
-  final int weight;
+class ProfileSummaryCard extends GetView<ProfileController> {
+  final Rx<Gender> gender;
+  final RxInt height;
+  final RxInt weight;
 
-  const ProfileSummaryCard({Key key, this.gender, this.height, this.weight})
+  const ProfileSummaryCard({Key key, this.height, this.weight, this.gender})
       : super(key: key);
 
   @override
@@ -24,11 +26,13 @@ class ProfileSummaryCard extends StatelessWidget {
           height: screenAwareSize(32.0, context),
           child: Row(
             children: <Widget>[
-              Expanded(child: _genderText()),
+              Expanded(child: Obx(() => (_genderText()))),
               _divider(),
-              Expanded(child: _text("${weight}kg")),
+              Expanded(
+                  child: Obx(() => (_text("${controller.weight.value}kg")))),
               _divider(),
-              Expanded(child: _text("${height}cm")),
+              Expanded(
+                  child: Obx(() => (_text("${controller.height.value}cm")))),
             ],
           ),
         ),
@@ -37,9 +41,9 @@ class ProfileSummaryCard extends StatelessWidget {
   }
 
   Widget _genderText() {
-    String genderText = gender == Gender.other
+    String genderText = controller.gender.value == Gender.other
         ? '-'
-        : (gender == Gender.male ? 'Male' : 'Female');
+        : (controller.gender.value == Gender.male ? 'Male' : 'Female');
     return _text(genderText);
   }
 

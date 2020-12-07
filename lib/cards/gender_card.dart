@@ -1,45 +1,50 @@
 import 'dart:math' as math;
+import 'package:WeightLossCal/controllers/profile_controller.dart';
+import 'package:WeightLossCal/utils/gender.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import '../../widgets/card_title.dart';
-import 'gender.dart';
+import 'package:get/get.dart';
+import '../widgets/card_title.dart';
 import 'package:flutter/material.dart';
 
 import 'package:WeightLossCal/utils/widget.dart' show screenAwareSize;
 
-class GenderCard extends StatefulWidget {
-  final Gender gender;
-  final ValueChanged<Gender> onChanged;
-
-  GenderCard({Key key, this.gender = Gender.other, this.onChanged})
-      : super(key: key);
-
-  @override
-  _GenderCardState createState() => _GenderCardState();
-}
-
-double _circleSize(BuildContext context) => screenAwareSize(80.0, context);
-
-class _GenderCardState extends State<GenderCard>
-    with SingleTickerProviderStateMixin {
+class GenderCardController extends GetxController
+    with SingleGetTickerProviderMixin {
   AnimationController _arrowAnimationController;
 
+  ProfileController pController = Get.put(ProfileController());
+
   @override
-  void initState() {
+  void onInit() {
     _arrowAnimationController = new AnimationController(
       vsync: this,
       lowerBound: -_defaultGenderAngle,
       upperBound: _defaultGenderAngle,
-      value: _genderAngles[widget.gender],
+      value: _genderAngles[pController.gender],
     );
-    super.initState();
+    super.onInit();
+  }
+
+  _setSelectedGender(Gender gender) {
+    pController.gender(gender);
+    _arrowAnimationController.animateTo(
+      _genderAngles[pController.gender],
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOutQuad,
+    );
   }
 
   @override
-  void dispose() {
+  void onClose() {
     _arrowAnimationController.dispose();
-    super.dispose();
+    super.onClose();
   }
+}
 
+class GenderCard extends GetView<ProfileController> {
+  final Rx<Gender> gender;
+
+  GenderCard({Key key, this.gender}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,25 +76,25 @@ class _GenderCardState extends State<GenderCard>
   Widget _drawMainStack() {
     return Container(
       width: double.infinity,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          _drawCircleIndicator(),
-          GenderIconTranslated(
-            gender: Gender.female,
-            isSelected: widget.gender == Gender.female,
-          ),
-          GenderIconTranslated(
-            gender: Gender.other,
-            isSelected: widget.gender == Gender.other,
-          ),
-          GenderIconTranslated(
-            gender: Gender.male,
-            isSelected: widget.gender == Gender.male,
-          ),
-          _drawGestureDetector()
-        ],
-      ),
+      child: Obx(() => (Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              _drawCircleIndicator(),
+              GenderIconTranslated(
+                gender: Gender.female,
+                isSelected: controller.gender.value == Gender.female,
+              ),
+              GenderIconTranslated(
+                gender: Gender.other,
+                isSelected: controller.gender.value == Gender.other,
+              ),
+              GenderIconTranslated(
+                gender: Gender.male,
+                isSelected: controller.gender.value == Gender.male,
+              ),
+              _drawGestureDetector()
+            ],
+          ))),
     );
   }
 
@@ -98,38 +103,23 @@ class _GenderCardState extends State<GenderCard>
       alignment: Alignment.center,
       children: [
         GenderCircle(),
-        GenderArrow(
-          listenable: _arrowAnimationController,
-        )
+        GetBuilder(
+            init: GenderCardController(),
+            builder: ((value) => GenderArrow(
+                  listenable: value._arrowAnimationController,
+                )))
       ],
     );
   }
 
   _drawGestureDetector() {
+    final myGenderController = Get.put(GenderCardController());
+
     return Positioned.fill(
       child: TapHandler(
-        onGenderTapped: _setSelectedGender,
+        onGenderTapped: myGenderController._setSelectedGender,
       ),
     );
-  }
-
-  void _setSelectedGender(Gender gender) {
-    widget.onChanged(gender);
-    _arrowAnimationController.animateTo(
-      _genderAngles[gender],
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeInOutQuad,
-    );
-
-    // final snackBar = SnackBar(
-    //   content: Text(gender == Gender.female
-    //       ? "Female"
-    //       : gender == Gender.male
-    //           ? "Male"
-    //           : "Other"),
-    // );
-
-    // Scaffold.of(context).showSnackBar(snackBar);
   }
 }
 
@@ -138,6 +128,8 @@ class GenderCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double _circleSize(BuildContext context) => screenAwareSize(80.0, context);
+
     return Container(
       width: _circleSize(context),
       height: _circleSize(context),
@@ -185,7 +177,7 @@ class GenderIconTranslated extends StatelessWidget {
     Gender.male: MaterialCommunityIcons.gender_male,
   };
 
-  double _circleSize(BuildContext context) => screenAwareSize(80.0, context);
+  double _circleSize(BuildContext context) => screenAwareSize(75.0, context);
 
   const GenderIconTranslated({Key key, this.gender, this.isSelected = false})
       : super(key: key);
