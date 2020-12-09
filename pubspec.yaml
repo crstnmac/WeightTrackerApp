@@ -31,6 +31,7 @@ dependencies:
   percent_indicator: '^2.1.7+2'
   flutter_vector_icons: ^0.2.1
   flutter_svg: ^0.19.2+1
+  get: ^3.21.3
 
 dev_dependencies:
   flutter_test:

@@ -1,16 +1,17 @@
 import 'dart:math' as math;
 
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 
-class WeightSlider extends StatelessWidget {
+class WeightSlider extends GetView<ProfileController> {
   WeightSlider({
     Key key,
     @required this.minValue,
     @required this.maxValue,
     @required this.width,
     @required this.value,
-    @required this.onChanged,
   })  : scrollController = new ScrollController(
           initialScrollOffset: (value - minValue) * width / 3,
         ),
@@ -20,7 +21,6 @@ class WeightSlider extends StatelessWidget {
   final int maxValue;
   final double width;
   final int value;
-  final ValueChanged<int> onChanged;
   final ScrollController scrollController;
 
   double get itemExtent => width / 3;
@@ -114,7 +114,7 @@ class WeightSlider extends StatelessWidget {
       }
 
       if (middleValue != value) {
-        onChanged(middleValue);
+        controller.weight(middleValue);
       }
     }
     return true;

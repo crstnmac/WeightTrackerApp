@@ -1,12 +1,15 @@
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../constants.dart';
 
-class ImtGraph extends StatelessWidget {
-  const ImtGraph({
-    Key key,
-  }) : super(key: key);
+class ImtGraph extends GetView<ProfileController> {
+  final RxInt height;
+  final RxInt weight;
+
+  const ImtGraph({Key key, this.height, this.weight}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class ImtGraph extends StatelessWidget {
             height: 115,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: kGreenCardColor,
+              color: controller.resultStatusColor,
               borderRadius: BorderRadius.circular(25.0),
             ),
             child: Padding(
@@ -29,7 +32,7 @@ class ImtGraph extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'YOUR IMT',
+                    'YOUR BMI',
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 11.0),
                   ),
@@ -40,7 +43,7 @@ class ImtGraph extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        "23.0",
+                        controller.resultPointsString,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.0),
                       ),
@@ -48,8 +51,8 @@ class ImtGraph extends StatelessWidget {
                         width: 8.0,
                       ),
                       Text(
-                        "Normal",
-                        style: TextStyle(color: Colors.grey),
+                        controller.resultStatusTitle,
+                        style: TextStyle(color: Colors.black87),
                       ),
                     ],
                   ),
@@ -61,7 +64,7 @@ class ImtGraph extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Expanded(
-                          child: Container(
+                        child: Container(
                           height: 42.0,
                           child: BarChart(
                             BarChartData(
@@ -109,9 +112,11 @@ getBarGroups() {
                 width: 2,
                 colors: i < 9
                     ? [kBlueColor]
-                    : i < 28
+                    : i < 25
                         ? [kGreenColor]
-                        : [kRedColor],
+                        : i < 32
+                            ? [Colors.orange]
+                            : [kRedColor],
               )
             ],
           ),

@@ -1,14 +1,13 @@
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:WeightLossCal/utils/widget.dart';
 import 'package:WeightLossCal/widgets/card_title.dart';
-import 'package:WeightLossCal/widgets/height_picker.dart';
+import 'package:WeightLossCal/widgets/height_silder.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class HeightCard extends StatelessWidget {
-  final int height;
-  final ValueChanged<int> onChanged;
-
-  const HeightCard({Key key, this.height = 170, this.onChanged})
-      : super(key: key);
+class HeightCard extends GetView<ProfileController> {
+  final RxInt height;
+  const HeightCard({Key key, this.height}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +24,7 @@ class HeightCard extends StatelessWidget {
             top: screenAwareSize(8.0, context),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CardTitle(
@@ -36,15 +36,13 @@ class HeightCard extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: screenAwareSize(8.0, context),
                   ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return HeightPicker(
-                        widgetHeight: constraints.maxHeight,
-                        height: height,
-                        onChange: (val) => onChanged(val),
-                      );
-                    },
-                  ),
+                  child: Obx(() => (HeightSlider(
+                        height: controller.height.value,
+                        unit: "cm",
+                        onChange: controller.height,
+                        currentHeightTextColor: Colors.blueAccent,
+                        numberLineColor: Colors.blueAccent,
+                      ))),
                 ),
               )
             ],

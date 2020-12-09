@@ -1,20 +1,19 @@
+import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:WeightLossCal/widgets/display_weight.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class TargetScreen extends StatefulWidget {
-  TargetScreen({Key key}) : super(key: key);
+class HistoryScreen extends GetView<ProfileController> {
+  HistoryScreen({Key key}) : super(key: key);
 
-  @override
-  _TargetScreenState createState() => _TargetScreenState();
-}
-
-class _TargetScreenState extends State<TargetScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Container(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SafeArea(
               child: Column(
