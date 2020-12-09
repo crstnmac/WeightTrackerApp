@@ -8,14 +8,45 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class HeightController extends GetxController {
-  ProfileController profileController = Get.put(ProfileController());
-
-  final minHeight = 145;
-  final maxHeight = 190;
-
   double startDragYOffset;
   int startDragHeight;
-  int newHeight;
+
+  ProfileController profileController = Get.put(ProfileController());
+
+  final int maxHeight = 190;
+  final int minHeight = 145;
+
+  int _normalizeHeight(int height) {
+    return math.max(minHeight, math.min(maxHeight, height));
+  }
+
+  int _globalOffsetToHeight(Offset globalOffset) {
+    RenderBox getBox = Get.context.findRenderObject();
+    Offset localPosition = getBox.globalToLocal(globalOffset);
+    double dy = localPosition.dy;
+    dy = dy - 26.0 - labelsFontSize / 2;
+    int height = maxHeight - (dy ~/ _pixelPerUnit);
+    return height;
+  }
+
+  _onDragStart(DragStartDetails dragStartDetails) {
+    int newHeight = _globalOffsetToHeight(dragStartDetails.globalPosition);
+    startDragYOffset = dragStartDetails.globalPosition.dy;
+    startDragHeight = newHeight;
+  }
+
+  _onDragUpdate(DragUpdateDetails dragUpdateDetails) {
+    double currentYOffset = dragUpdateDetails.globalPosition.dy;
+    double verticalDifference = startDragYOffset - currentYOffset;
+    int diffHeight = verticalDifference ~/ _pixelPerUnit;
+    int height = _normalizeHeight(startDragHeight + diffHeight);
+    profileController.height(height);
+  }
+
+  _onTapDown(TapDownDetails tapDownDetails) {
+    int height = _globalOffsetToHeight(tapDownDetails.globalPosition);
+    _normalizeHeight(height);
+  }
 
   int get totalUnits => maxHeight - minHeight;
 
@@ -36,41 +67,9 @@ class HeightController extends GetxController {
     double marginTop = 26.0;
     return totalHeight - (marginBottom + marginTop + labelsFontSize);
   }
-
-  _onDragStart(DragStartDetails dragStartDetails) {
-    newHeight = _globalOffsetToHeight(dragStartDetails.globalPosition);
-    startDragYOffset = dragStartDetails.globalPosition.dy;
-    startDragHeight = newHeight;
-  }
-
-  _onDragUpdate(DragUpdateDetails dragUpdateDetails) {
-    double currentYOffset = dragUpdateDetails.globalPosition.dy;
-    double verticalDifference = startDragYOffset - currentYOffset;
-    int diffHeight = verticalDifference ~/ _pixelPerUnit;
-    int height = _normalizeHeight(startDragHeight + diffHeight);
-    profileController.height(height);
-  }
-
-  _onTapDown(TapDownDetails tapDownDetails) {
-    int height = _globalOffsetToHeight(tapDownDetails.globalPosition);
-    _normalizeHeight(height);
-  }
-
-  int _normalizeHeight(int height) {
-    return math.max(minHeight, math.min(maxHeight, height));
-  }
-
-  int _globalOffsetToHeight(Offset globalOffset) {
-    RenderBox getBox = Get.context.findRenderObject();
-    Offset localPosition = getBox.globalToLocal(globalOffset);
-    double dy = localPosition.dy;
-    dy = dy - 26.0 - labelsFontSize / 2;
-    int height = maxHeight - (dy ~/ _pixelPerUnit);
-    return height;
-  }
 }
 
-class HeightPicker extends StatelessWidget {
+class HeightPicker extends GetView<ProfileController> {
   final int maxHeight;
   final int minHeight;
   final RxInt height;
@@ -83,25 +82,25 @@ class HeightPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HeightController heightController = Get.put(HeightController());
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTapDown: heightController._onTapDown,
-      onVerticalDragStart: heightController._onDragStart,
-      onVerticalDragUpdate: heightController._onDragUpdate,
-      child: Stack(
-        children: [
-          // _drawPerson(),
-          Obx(() => (_drawSlider())),
-          _drawLabels(),
-        ],
-      ),
-    );
+
+    return Obx(() => (GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTapDown: heightController._onTapDown,
+          onVerticalDragStart: heightController._onDragStart,
+          onVerticalDragUpdate: heightController._onDragUpdate,
+          child: Stack(
+            children: [
+              _drawPerson(),
+              _drawSlider(),
+              _drawLabels(),
+            ],
+          ),
+        )));
   }
 
   Widget _drawPerson() {
-    HeightController heightController = Get.put(HeightController());
-
-    double personImageHeight = heightController._sliderPosition + 16.0;
+    double personImageHeight =
+        Get.put(HeightController())._sliderPosition + 16.0;
     return Align(
       alignment: Alignment.bottomCenter,
       child: SvgPicture.asset(
@@ -113,25 +112,20 @@ class HeightPicker extends StatelessWidget {
   }
 
   Widget _drawSlider() {
-    HeightController heightController = Get.put(HeightController());
-
     return Positioned(
-      child:
-          HeightSlider(height: heightController.profileController.height.value),
+      child: HeightSlider(height: controller.height.value),
       left: 0.0,
       right: 0.0,
-      bottom: heightController._sliderPosition,
+      bottom: Get.put(HeightController())._sliderPosition,
     );
   }
 
   Widget _drawLabels() {
-    HeightController heightController = Get.put(HeightController());
-
-    int labelsToDispaly = heightController.totalUnits ~/ 5 + 1;
+    int labelsToDispaly = Get.put(HeightController()).totalUnits ~/ 5 + 1;
     List<Widget> labels = List.generate(
       labelsToDispaly,
       (index) => Text(
-        "${heightController.maxHeight - 5 * index}",
+        "${Get.put(HeightController()).maxHeight - 5 * index}",
         style: labelsTextStyle,
       ),
     );

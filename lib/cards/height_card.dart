@@ -39,8 +39,8 @@ class HeightCard extends GetView<ProfileController> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return HeightPicker(
-                        widgetHeight: constraints.maxHeight,
                         height: controller.height,
+                        widgetHeight: constraints.maxHeight,
                       );
                     },
                   ),

@@ -28,9 +28,6 @@ class ProfileController extends GetxController {
   final _calculator = BMICalculator();
   final _progress = ProgressCalculator();
 
-  double startDragYOffset;
-  int startDragHeight;
-
   Color get resultStatusColor => _bmiStatusColor[_calculator.status];
 
   String get resultStatusTitle =>
