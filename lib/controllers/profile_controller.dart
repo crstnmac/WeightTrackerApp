@@ -23,7 +23,6 @@ class ProfileController extends GetxController {
   final weight = 85.obs;
   final targetWeight = 75.obs;
   final age = 19.obs;
-  final percent = 0.0.obs;
 
   final _calculator = BMICalculator();
   final _progress = ProgressCalculator();
@@ -36,6 +35,8 @@ class ProfileController extends GetxController {
   get resultText => _calculator.text;
 
   get leftWeight => _progress.result;
+
+  get percent => _progress.percent;
 
   get resultPointsString => _calculator.points.toStringAsFixed(1);
 
