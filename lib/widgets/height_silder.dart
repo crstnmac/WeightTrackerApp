@@ -1,88 +1,195 @@
-import 'package:WeightLossCal/constants.dart';
-import 'package:WeightLossCal/controllers/profile_controller.dart';
-import 'package:WeightLossCal/utils/height_styles.dart';
-import 'package:WeightLossCal/utils/widget.dart';
+import 'dart:math' as math;
+
+import 'package:WeightLossCal/widgets/height_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class HeightSlider extends GetView<ProfileController> {
+class HeightSlider extends StatefulWidget {
+  final int maxHeight;
+  final int minHeight;
   final int height;
+  final String unit;
+  final String personImagePath;
+  final Color primaryColor;
+  final Color accentColor;
+  final Color numberLineColor;
+  final Color currentHeightTextColor;
+  final Color sliderCircleColor;
+  final ValueChanged<int> onChange;
 
-  const HeightSlider({Key key, this.height}) : super(key: key);
+  const HeightSlider(
+      {Key key,
+      @required this.height,
+      @required this.onChange,
+      this.maxHeight = 190,
+      this.minHeight = 145,
+      this.unit = 'cm',
+      this.primaryColor,
+      this.accentColor,
+      this.numberLineColor,
+      this.currentHeightTextColor,
+      this.sliderCircleColor,
+      this.personImagePath})
+      : super(key: key);
+
+  int get totalUnits => maxHeight - minHeight;
 
   @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SliderLabel(height: height),
-          Row(
-            children: [
-              SliderCircle(),
-              Expanded(child: SliderLine()),
-            ],
-          )
-        ],
-      ),
-    );
-  }
+  _HeightSliderState createState() => _HeightSliderState();
 }
 
-class SliderLine extends StatelessWidget {
-  const SliderLine({Key key}) : super(key: key);
+class _HeightSliderState extends State<HeightSlider> {
+  double startDragYOffset;
+  int startDragHeight;
+  double widgetHeight = 50;
+  double labelFontSize = 12.0;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.max,
-      children: List.generate(
-          40,
-          (index) => Expanded(
-                  child: Container(
-                height: 2.0,
-                decoration: BoxDecoration(
-                    color: index.isEven ? kBlueColor : Colors.white),
-              ))),
-    );
+  double get _pixelsPerUnit {
+    return _drawingHeight / widget.totalUnits;
   }
-}
 
-class SliderCircle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: circleSizeAdapted(context),
-      height: circleSizeAdapted(context),
-      decoration: BoxDecoration(color: kBlueColor, shape: BoxShape.circle),
-      child: Icon(
-        Icons.unfold_more,
-        color: Colors.white,
-        size: 0.6 * circleSizeAdapted(context),
-      ),
-    );
+  double get _sliderPosition {
+    double halfOfBottomLabel = labelFontSize / 2;
+    int unitsFromBottom = widget.height - widget.minHeight;
+    return halfOfBottomLabel + unitsFromBottom * _pixelsPerUnit;
   }
-}
 
-class SliderLabel extends StatelessWidget {
-  final int height;
-
-  const SliderLabel({Key key, this.height}) : super(key: key);
+  double get _drawingHeight {
+    double totalHeight = this.widgetHeight;
+    double marginBottom = 12.0;
+    double marginTop = 12.0;
+    return totalHeight - (marginBottom + marginTop + labelFontSize);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        left: screenAwareSize(4.0, context),
-        bottom: screenAwareSize(2.0, context),
+      padding: EdgeInsets.all(12),
+      child: LayoutBuilder(builder: (context, constraints) {
+        this.widgetHeight = constraints.maxHeight;
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTapDown: this._onTapDown,
+          onVerticalDragStart: this._onDragStart,
+          onVerticalDragUpdate: this._onDragUpdate,
+          child: Stack(
+            overflow: Overflow.visible,
+            children: <Widget>[
+              _drawPersonImage(),
+              _drawSlider(),
+              _drawLabels(),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  _onTapDown(TapDownDetails tapDownDetails) {
+    int height = _globalOffsetToHeight(tapDownDetails.globalPosition);
+    widget.onChange(_normalizeHeight(height));
+  }
+
+  int _normalizeHeight(int height) {
+    return math.max(widget.minHeight, math.min(widget.maxHeight, height));
+  }
+
+  int _globalOffsetToHeight(Offset globalOffset) {
+    RenderBox getBox = context.findRenderObject();
+    Offset localPosition = getBox.globalToLocal(globalOffset);
+    double dy = localPosition.dy;
+    dy = dy - 12.0 - labelFontSize / 2;
+    int height = widget.maxHeight - (dy ~/ _pixelsPerUnit);
+    return height;
+  }
+
+  _onDragStart(DragStartDetails dragStartDetails) {
+    int newHeight = _globalOffsetToHeight(dragStartDetails.globalPosition);
+    widget.onChange(newHeight);
+    setState(() {
+      startDragYOffset = dragStartDetails.globalPosition.dy;
+      startDragHeight = newHeight;
+    });
+  }
+
+  _onDragUpdate(DragUpdateDetails dragUpdateDetails) {
+    double currentYOffset = dragUpdateDetails.globalPosition.dy;
+    double verticalDifference = startDragYOffset - currentYOffset;
+    int diffHeight = verticalDifference ~/ _pixelsPerUnit;
+    int height = _normalizeHeight(startDragHeight + diffHeight);
+    setState(() => widget.onChange(height));
+  }
+
+  Widget _drawSlider() {
+    return Positioned(
+      child: HeightPicker(
+          height: widget.height,
+          unit: widget.unit,
+          primaryColor: widget.primaryColor ?? Theme.of(context).primaryColor,
+          accentColor: widget.accentColor ?? Theme.of(context).accentColor,
+          currentHeightTextColor:
+              widget.currentHeightTextColor ?? Theme.of(context).accentColor,
+          sliderCircleColor:
+              widget.sliderCircleColor ?? Theme.of(context).primaryColor),
+      left: 0.0,
+      right: 0.0,
+      bottom: _sliderPosition,
+    );
+  }
+
+  Widget _drawLabels() {
+    int labelsToDisplay = widget.totalUnits ~/ 5 + 1;
+    List<Widget> labels = List.generate(
+      labelsToDisplay,
+      (idx) {
+        return Text(
+          "${widget.maxHeight - 5 * idx}",
+          style: TextStyle(
+            color: widget.numberLineColor ?? Theme.of(context).accentColor,
+            fontSize: labelFontSize,
+          ),
+        );
+      },
+    );
+
+    return Align(
+      alignment: Alignment.centerRight,
+      child: IgnorePointer(
+        child: Padding(
+          padding: EdgeInsets.only(
+            right: 12.0,
+            bottom: 12.0,
+            top: 12.0,
+          ),
+          child: Column(
+            children: labels,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+        ),
       ),
-      child: Text(
-        "$height",
-        style: TextStyle(
-            fontSize: selectedLabelFontSize,
-            color: kBlueColor,
-            fontWeight: FontWeight.w600),
+    );
+  }
+
+  Widget _drawPersonImage() {
+    double personImageHeight = _sliderPosition + 12.0;
+    if (widget.personImagePath == null) {
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: SvgPicture.asset(
+          "images/person.svg",
+          package: 'height_slider',
+          height: personImageHeight,
+          width: personImageHeight / 3,
+        ),
+      );
+    }
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SvgPicture.asset(
+        widget.personImagePath,
+        height: personImageHeight,
+        width: personImageHeight / 3,
       ),
     );
   }

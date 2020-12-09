@@ -1,149 +1,114 @@
-import 'dart:math' as math;
-
-import 'package:WeightLossCal/controllers/profile_controller.dart';
-import 'package:WeightLossCal/utils/height_styles.dart';
-import 'package:WeightLossCal/widgets/height_silder.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 
-class HeightController extends GetxController {
-  double startDragYOffset;
-  int startDragHeight;
+class HeightPicker extends StatelessWidget {
+  final int height;
+  final String unit;
+  final Color primaryColor;
+  final Color accentColor;
+  final Color currentHeightTextColor;
+  final Color sliderCircleColor;
 
-  ProfileController profileController = Get.put(ProfileController());
-
-  final int maxHeight = 190;
-  final int minHeight = 145;
-
-  int _normalizeHeight(int height) {
-    return math.max(minHeight, math.min(maxHeight, height));
-  }
-
-  int _globalOffsetToHeight(Offset globalOffset) {
-    RenderBox getBox = Get.context.findRenderObject();
-    Offset localPosition = getBox.globalToLocal(globalOffset);
-    double dy = localPosition.dy;
-    dy = dy - 26.0 - labelsFontSize / 2;
-    int height = maxHeight - (dy ~/ _pixelPerUnit);
-    return height;
-  }
-
-  _onDragStart(DragStartDetails dragStartDetails) {
-    int newHeight = _globalOffsetToHeight(dragStartDetails.globalPosition);
-    startDragYOffset = dragStartDetails.globalPosition.dy;
-    startDragHeight = newHeight;
-  }
-
-  _onDragUpdate(DragUpdateDetails dragUpdateDetails) {
-    double currentYOffset = dragUpdateDetails.globalPosition.dy;
-    double verticalDifference = startDragYOffset - currentYOffset;
-    int diffHeight = verticalDifference ~/ _pixelPerUnit;
-    int height = _normalizeHeight(startDragHeight + diffHeight);
-    profileController.height(height);
-  }
-
-  _onTapDown(TapDownDetails tapDownDetails) {
-    int height = _globalOffsetToHeight(tapDownDetails.globalPosition);
-    _normalizeHeight(height);
-  }
-
-  int get totalUnits => maxHeight - minHeight;
-
-  double get _pixelPerUnit {
-    return _drawHeight / totalUnits;
-  }
-
-  double get _sliderPosition {
-    double halfOfBottomLabel = labelsFontSize / 2;
-    int unitsFromBottom = profileController.height.value - minHeight;
-    return halfOfBottomLabel + unitsFromBottom * _pixelPerUnit;
-  }
-
-  double get _drawHeight {
-    double totalHeight = Get.height;
-    // widget.widgetHeight;
-    double marginBottom = 16.0;
-    double marginTop = 26.0;
-    return totalHeight - (marginBottom + marginTop + labelsFontSize);
-  }
-}
-
-class HeightPicker extends GetView<ProfileController> {
-  final int maxHeight;
-  final int minHeight;
-  final RxInt height;
-  final double widgetHeight;
-
-  HeightPicker(
-      {Key key, this.height, this.widgetHeight, this.maxHeight, this.minHeight})
+  const HeightPicker(
+      {Key key,
+      @required this.height,
+      @required this.unit,
+      @required this.primaryColor,
+      @required this.accentColor,
+      @required this.currentHeightTextColor,
+      @required this.sliderCircleColor})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    HeightController heightController = Get.put(HeightController());
-
-    return Obx(() => (GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTapDown: heightController._onTapDown,
-          onVerticalDragStart: heightController._onDragStart,
-          onVerticalDragUpdate: heightController._onDragUpdate,
-          child: Stack(
-            children: [
-              _drawPerson(),
-              _drawSlider(),
-              _drawLabels(),
+    return IgnorePointer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SliderLabel(
+              height: this.height,
+              unit: this.unit,
+              currentHeightTextColor: this.currentHeightTextColor),
+          Row(
+            children: <Widget>[
+              SliderCircle(sliderCircleColor: this.sliderCircleColor),
+              Expanded(child: SliderLine(primaryColor: this.primaryColor)),
             ],
           ),
-        )));
-  }
-
-  Widget _drawPerson() {
-    double personImageHeight =
-        Get.put(HeightController())._sliderPosition + 16.0;
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: SvgPicture.asset(
-        "images/person.svg",
-        height: personImageHeight,
-        width: personImageHeight / 3,
+        ],
       ),
     );
   }
+}
 
-  Widget _drawSlider() {
-    return Positioned(
-      child: HeightSlider(height: controller.height.value),
-      left: 0.0,
-      right: 0.0,
-      bottom: Get.put(HeightController())._sliderPosition,
-    );
-  }
+class SliderLabel extends StatelessWidget {
+  final int height;
+  final String unit;
+  final Color currentHeightTextColor;
 
-  Widget _drawLabels() {
-    int labelsToDispaly = Get.put(HeightController()).totalUnits ~/ 5 + 1;
-    List<Widget> labels = List.generate(
-      labelsToDispaly,
-      (index) => Text(
-        "${Get.put(HeightController()).maxHeight - 5 * index}",
-        style: labelsTextStyle,
-      ),
-    );
+  const SliderLabel(
+      {Key key,
+      @required this.height,
+      @required this.unit,
+      @required this.currentHeightTextColor})
+      : super(key: key);
 
-    return Align(
-      alignment: Alignment.centerRight,
-      child: IgnorePointer(
-        child: Padding(
-          padding: EdgeInsets.only(
-            right: 12.0,
-            bottom: 16.0,
-            top: 26.0,
-          ),
-          child: Column(
-            children: labels,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        "$height $unit",
+        style: TextStyle(
+          fontSize: 16.0,
+          color: this.currentHeightTextColor,
+          fontWeight: FontWeight.w600,
         ),
+      ),
+    );
+  }
+}
+
+class SliderLine extends StatelessWidget {
+  final Color primaryColor;
+
+  const SliderLine({Key key, @required this.primaryColor}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.max,
+      children: List.generate(
+          40,
+          (i) => Expanded(
+                child: Container(
+                  height: 2.0,
+                  decoration: BoxDecoration(
+                      color: i.isEven ? this.primaryColor : Colors.white),
+                ),
+              )),
+    );
+  }
+}
+
+class SliderCircle extends StatelessWidget {
+  final Color sliderCircleColor;
+
+  const SliderCircle({Key key, @required this.sliderCircleColor})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 32.0,
+      height: 32.0,
+      decoration: BoxDecoration(
+        color: this.sliderCircleColor,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.unfold_more,
+        color: Colors.white,
+        size: 0.6 * 32.0,
       ),
     );
   }

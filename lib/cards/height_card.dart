@@ -1,7 +1,7 @@
 import 'package:WeightLossCal/controllers/profile_controller.dart';
 import 'package:WeightLossCal/utils/widget.dart';
 import 'package:WeightLossCal/widgets/card_title.dart';
-import 'package:WeightLossCal/widgets/height_picker.dart';
+import 'package:WeightLossCal/widgets/height_silder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,14 +36,13 @@ class HeightCard extends GetView<ProfileController> {
                   padding: EdgeInsets.only(
                     bottom: screenAwareSize(8.0, context),
                   ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return HeightPicker(
-                        height: controller.height,
-                        widgetHeight: constraints.maxHeight,
-                      );
-                    },
-                  ),
+                  child: Obx(() => (HeightSlider(
+                        height: controller.height.value,
+                        unit: "cm",
+                        onChange: controller.height,
+                        currentHeightTextColor: Colors.blueAccent,
+                        numberLineColor: Colors.blueAccent,
+                      ))),
                 ),
               )
             ],
